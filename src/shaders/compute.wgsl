@@ -31,7 +31,7 @@ fn checkBorder(x: i32, y: i32) -> bool {
     return (x < 0 || x >= i32(fieldRes.x) || y < 0 || y >= i32(fieldRes.y));
 }
 
-fn getVal(x: u32, y: u32) -> f32 {
+fn getHeight(x: u32, y: u32) -> f32 {
     if (checkBorder(i32(x), i32(y))) {
         return 0;
     }
@@ -48,18 +48,23 @@ fn processField(@builtin(global_invocation_id) cell: vec3u) {
         return;
     }
 
-    let sum = getVal(cell.x + 1, cell.y + 1) +
-              getVal(cell.x + 1, cell.y) +
-              getVal(cell.x + 1, cell.y - 1) +
-              getVal(cell.x, cell.y - 1) +
-              getVal(cell.x - 1, cell.y - 1) +
-              getVal(cell.x - 1, cell.y) +
-              getVal(cell.x - 1, cell.y + 1) +
-              getVal(cell.x, cell.y + 1);
+    let sumHeight = getHeight(cell.x + 1, cell.y + 1) +
+              getHeight(cell.x + 1, cell.y) +
+              getHeight(cell.x + 1, cell.y - 1) +
+              getHeight(cell.x, cell.y - 1) +
+              getHeight(cell.x - 1, cell.y - 1) +
+              getHeight(cell.x - 1, cell.y) +
+              getHeight(cell.x - 1, cell.y + 1) +
+              getHeight(cell.x, cell.y + 1);
+
+//    let sumHeight =  getHeight(cell.x + 1, cell.y) +
+//                  getHeight(cell.x, cell.y - 1) +
+//                  getHeight(cell.x - 1, cell.y) +
+//                  getHeight(cell.x, cell.y + 1);
 
     let pos = getPos(cell.xy);
     fieldStateOut[pos].height += fieldStateIn[pos].vel;
-    fieldStateOut[pos].vel += (sum / 8 - fieldStateIn[pos].height) * fieldStateIn[pos].mass;
+    fieldStateOut[pos].vel += (sumHeight / 8 - fieldStateIn[pos].height) * fieldStateIn[pos].mass;
 }
 
 @compute @workgroup_size(8, 8)
@@ -67,10 +72,12 @@ fn updateField(@builtin(global_invocation_id) cell: vec3u) {
     if (checkBorder(i32(cell.x), i32(cell.y))) {
         return;
     }
+
     let pos = getPos(cell.xy);
-    if (cell.x == fieldRes.x / 2 - 250 && cell.y == fieldRes.y / 2) {
-        fieldStateOut[pos].height = (sin(2 * PI * time / 50)) * 10;
-    } else if (cell.x == fieldRes.x / 2 + 250 && cell.y == fieldRes.y / 2) {
+//    if (cell.x == fieldRes.x / 2 - 250 && cell.y == fieldRes.y / 2) {
+//        fieldStateOut[pos].height = (sin(2 * PI * time / 100)) * 10;
+//    }
+    if (cell.x == fieldRes.x / 2 - 250 && cell.y > fieldRes.y / 2 - 100 && cell.y < fieldRes.y / 2 - 90 && time < 200) {
         fieldStateOut[pos].height = (sin(2 * PI * time / 50)) * 10;
     }
 }

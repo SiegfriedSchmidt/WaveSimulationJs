@@ -87,7 +87,7 @@ export default class {
 
         setTimeout(() => {
             requestAnimationFrame(() => this.update())
-        }, 1)
+        }, 2000)
     }
 
     update() {
@@ -110,42 +110,46 @@ export default class {
         requestAnimationFrame(() => this.update())
     }
 
-    rect(rectPos: [number, number], size: [number, number], vel: number, mass: number, height: number) {
-        for (let x = rectPos[0]; x < rectPos[0] + size[0]; x++) {
-            for (let y = rectPos[1]; y < rectPos[1] + size[1]; y++) {
-                const pos = x + y * this.fieldResolution[0]
-                const idx = pos * 3
-                this.fieldStateArray[idx] = height
-                this.fieldStateArray[idx + 1] = vel
-                this.fieldStateArray[idx + 2] = mass
-            }
-        }
-    }
-
     initField() {
         for (let i = 0; i < this.fieldResolution[0] * this.fieldResolution[1]; i++) {
-            const idx = i * 3
+            const idx = i * this.paramsCount
             this.fieldStateArray[idx] = 0
             this.fieldStateArray[idx + 1] = 0
             this.fieldStateArray[idx + 2] = 1
         }
         // this.rect([this.fieldResolution[0] / 2 + 200, this.fieldResolution[1] / 2 - 200], [1, 1], 1, 1, 1)
         // this.rect([this.fieldResolution[0] / 2 + 200, this.fieldResolution[1] / 2 + 200], [1, 1], 100, 1, 1)
-
+        //
         // for (let x = 0; x < this.fieldResolution[0]; x++) {
         //     for (let y = 0; y < this.fieldResolution[1]; y++) {
-        //         const x1 = x - (this.fieldResolution[0] / 2 + 200);
+        //         const x1 = x - (this.fieldResolution[0] / 2 - 250);
         //         const y1 = y - this.fieldResolution[1] / 2;
         //         const dis = x1 * x1 + y1 * y1
-        //         if (dis < 25) {
+        //         if (dis < 10000) {
+        //             if (x % 12 < 5) continue
         //             const pos = x + y * this.fieldResolution[0]
         //             const idx = pos * 3
-        //             this.fieldStateArray[idx] = 0
-        //             this.fieldStateArray[idx + 1] = 1 - dis / 25
+        //             this.fieldStateArray[idx] = 1
+        //             this.fieldStateArray[idx + 1] = 0
         //             this.fieldStateArray[idx + 2] = 1
         //         }
         //     }
         // }
+
+        for (let x = 0; x < this.fieldResolution[0]; x++) {
+            for (let y = 0; y < this.fieldResolution[1]; y++) {
+                const x1 = x - (this.fieldResolution[0] / 2 + 200);
+                const y1 = y - this.fieldResolution[1] / 2;
+                const dis = x1 * x1 + y1 * y1
+                if (dis < 10000) {
+                    const pos = x + y * this.fieldResolution[0]
+                    const idx = pos * 3
+                    this.fieldStateArray[idx] = 0
+                    this.fieldStateArray[idx + 1] = 0
+                    this.fieldStateArray[idx + 2] = 0.4
+                }
+            }
+        }
 
 
         // const rectPos = [this.fieldResolution[0] / 2 - 200, 0]
@@ -162,7 +166,7 @@ export default class {
         //             continue
         //         }
         //         const pos = x + y * this.fieldResolution[0]
-        //         const idx = pos * 3
+        //         const idx = pos * this.paramsCount
         //         this.fieldStateArray[idx] = 0
         //         this.fieldStateArray[idx + 1] = 0
         //         this.fieldStateArray[idx + 2] = 0.000001

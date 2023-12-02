@@ -35,9 +35,9 @@ fn palette2(t: f32) -> vec3f {
 @fragment
 fn fragmentMain(@builtin(position) pos: vec4f) -> @location(0) vec4f {
     let cellPos = getCellPos(pos);
-    let color = max(0, min(1, fieldState[cellPos].height));
+    let height = max(0, min(1, fieldState[cellPos].height));
     if (fieldState[cellPos].mass != 1) {
-        return vec4f(vec3f(abs(color), abs(color), 0) + 0.1, 1);
+        return vec4f(vec3f(height) + 0.1, 1);
     }
-    return vec4f(vec3f(0, color, 0), 1);
+    return vec4f(vec3f(height), 1);
 }
